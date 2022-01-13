@@ -53,10 +53,10 @@ let NERDTreeShowHidden=1
 set ttymouse=sgr
 
 " Remap home and end key behaviours
-map <ESC>[8~    <End>
-map <ESC>[7~    <Home>
-imap <ESC>[8~    <End>  
-imap <ESC>[7~    <Home>
+map <ESC>[8~  <End>
+map <ESC>[7~  <Home>
+imap <ESC>[8~ <End>  
+imap <ESC>[7~ <Home>
 
 " Home key behaviour
 noremap  <expr> <Home> col('.') == match(getline('.'), '\S') + 1 ? "\<Home>" : "^"
