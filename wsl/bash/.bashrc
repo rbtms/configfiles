@@ -1,4 +1,4 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
+#s ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
@@ -76,9 +76,12 @@ esac
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls -alsh --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    # -a: Show all
+    # -l: Show as long list
+    # -h: Human readable sizes
+    # -v: Sort numbers 1-2-10 and hidden files first
+    # -G: Dont show group on long lists
+    alias ls='ls -alhv -G --color=auto'
 
     #alias grep='grep --color=auto'
     #alias fgrep='fgrep --color=auto'
@@ -93,25 +96,32 @@ eval "$(dircolors -p | \
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
-
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
 alias python='python.exe'
-alias python3='python.exe'
+alias profile='python.exe -m profile'
 alias pip="pip3.exe"
 alias pip3="pip3.exe"
-alias gvim='"/mnt/c/Program Files/vim/vim82/gvim.exe"'
+alias explorer="explorer.exe"
+alias vlc='"/mnt/c/Program Files/VideoLAN/VLC/vlc.exe"'
+alias cleanall="/usr/bin/clean.sh"
 alias catbox="cat /usr/bin/catbox.py | python.exe -"
+alias litterbox="cat /usr/bin/catbox.py | python.exe - litterbox"
+alias wallpaper="python /usr/bin/wallpaper.py"
+alias mail="cat /usr/bin/mail.py | python.exe -"
+alias torrent="python3 /usr/bin/torrent.py"
+
+gvim() { "/mnt/c/Program Files/vim/vim82/gvim.exe" $1 & }
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+# Windows home path
+export whome='/mnt/c/Users/Alvaro'
+export desktop='/mnt/c/Users/Alvaro/desktop'
+export pictures='/mnt/c/Users/Alvaro/pictures'
+export downloads='/mnt/c/Users/Alvaro/downloads'
+export documents='/mnt/c/Users/Alvaro/documents'
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -123,3 +133,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
