@@ -8,6 +8,8 @@ case $- in
       *) return;;
 esac
 
+stty start undef
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -67,7 +69,7 @@ unset color_prompt force_color_prompt
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    PS1="\[\e]0;\w\a\]$PS1"
     ;;
 *)
     ;;
@@ -100,13 +102,14 @@ eval "$(dircolors -p | \
 alias python='python.exe'
 alias profile='python.exe -m profile'
 alias pip="pip3.exe"
-alias pip3="pip3.exe"
 alias explorer="explorer.exe"
 alias vlc='"/mnt/c/Program Files/VideoLAN/VLC/vlc.exe"'
 alias cleanall="/usr/bin/clean.sh"
+alias ffbackup="/usr/bin/ffbackup.sh"
+alias howdoi="python -m howdoi"
 alias catbox="cat /usr/bin/catbox.py | python.exe -"
 alias litterbox="cat /usr/bin/catbox.py | python.exe - litterbox"
-alias wallpaper="python /usr/bin/wallpaper.py"
+alias wallpaper="python $(wslpath -m /usr/bin/wallpaper.py)"
 alias mail="cat /usr/bin/mail.py | python.exe -"
 alias torrent="python3 /usr/bin/torrent.py"
 
@@ -122,6 +125,7 @@ export desktop='/mnt/c/Users/Alvaro/desktop'
 export pictures='/mnt/c/Users/Alvaro/pictures'
 export downloads='/mnt/c/Users/Alvaro/downloads'
 export documents='/mnt/c/Users/Alvaro/documents'
+export NVM_DIR="$HOME/.nvm"
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -134,6 +138,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export NVM_DIR="$HOME/.nvm"
+# Load cargo env
+. "$HOME/.cargo/env"
+
+# Load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
