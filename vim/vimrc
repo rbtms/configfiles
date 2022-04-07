@@ -1,12 +1,14 @@
 runtime! debian.vim
 
-" Vim with all enchancements
+"" Vim with all enchancements
 source $VIMRUNTIME/vimrc_example.vim
 
-" Restore cursor to file position in previous edition session
+" ------------------------- Behaviour ------------------------------- "
+
+"" Restore cursor to file position in previous edition session
 set viminfo='10,\"100,:20,%,n$VIM/_viminfo
 
-" Compatibility
+"" Compatibility
 set nocompatible
 set viminfo='20,\"50 "
 set ts=4
@@ -17,20 +19,13 @@ set belloff=all
 set bs=2
 set ai
 
-" Filetype plugins
+"" Filetype plugins
 filetype indent on
 
-" Syntax
-syntax on
-colorscheme onedark
-
-" Show line numbers
-set number
-
-" Ignore search case
+"" Ignore search case
 set ignorecase
 
-" Move all temporal files to a different directory
+"" Move all temporal files to a different directory
 set backup
 set noundofile
 set backupdir=/tmp
@@ -45,29 +40,121 @@ set shortmess+=I
 :set splitright
 :command Term vert term
 
-" NERDTree
-let NERDTreeIgnore=['.swp', '.ini', '.DAT']
-let NERDTreeShowHidden=1
+"" Show line numbers
+set number
 
-" Allow to move splits with the mouse
+"" Highlight current line number
+set cursorline
+
+"" Open help on vertical split
+cnoreabbrev h vert h
+
+"" Copy
+"vnoremap <C-c> :'<,'>:w !/mnt/c/Windows/System32/clip.exe<CR>
+
+"" Allow to move splits with the mouse
 set ttymouse=sgr
 
-" Remap home and end key behaviours
-map <ESC>[8~  <End>
-map <ESC>[7~  <Home>
+"" Folding
+set foldmethod=indent   
+set nofoldenable
+set foldnestmax=1
+set foldlevel=0
+nnoremap <space> za
+vnoremap <space> zf
+
+"" Autoclose quotes
+"inoremap " ""<left>
+"inoremap ' ''<left>
+"inoremap ( ()<left>
+"inoremap [ []<left>
+"inoremap { {}<left>
+"inoremap {<CR> {<CR>}<ESC>O
+"inoremap {;<CR> {<CR>};<ESC>O
+
+"" Change cursor on insert and normal modes (bug: the cursor remains after exit)
+let &t_SI = "\e[5 q"
+let &t_EI = "\e[1 q"
+
+augroup myCmds
+au!
+autocmd VimEnter * silent !echo -ne "\e[1 q"
+augroup END
+
+"" vim -b : edit binary
+augroup Binary
+  au!
+  au BufReadPre  *.bin let &bin=1
+  au BufReadPost *.bin if &bin | %!xxd
+  au BufReadPost *.bin set ft=xxd | endif
+  au BufWritePre *.bin if &bin | %!xxd -r
+  au BufWritePre *.bin endif
+  au BufWritePost *.bin if &bin | %!xxd
+  au BufWritePost *.bin set nomod | endif
+augroup END
+
+"" Remap home and end key behaviours
+map  <ESC>[8~ <End>
+map  <ESC>[7~ <Home>
 imap <ESC>[8~ <End>  
 imap <ESC>[7~ <Home>
 
-" Home key behaviour
+"" Home key behaviour
 noremap  <expr> <Home> col('.') == match(getline('.'), '\S') + 1 ? "\<Home>" : "^"
 inoremap <expr> <Home> col('.') == match(getline('.'), '\S') + 1 ? "\<Home>" : "\<C-O>^"
 
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
+"" Jump to the last position when reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-" Source a global configuration file if available
+" -------------------------- Plugins -------------------------------- "
+
+"" NERDTree
+let NERDTreeIgnore=['.swp', '.ini', '.DAT']
+let NERDTreeShowHidden=1
+:smap <C-c> <C-g>y
+
+"" Undotree
+nnoremap <F5> :UndotreeToggle<CR>
+
+"" Tagbar
+nmap <F8> :TagbarToggle<CR>
+
+"" Autocomplete
+"" Dont show doc window
+set completeopt=menu
+
+"let g:jedi#use_splits_not_buffers = "right"
+"let g:jedi#auto_initialization = 0
+"let g:jedi#auto_vim_configuration = 0
+"let g:jedi#popup_on_dot = 1
+"let g:jedi#show_call_signatures = 0
+"let g:jedi#completions_enabled = 1
+
+" --------------------------- Style --------------------------------- "
+
+"" Syntax
+syntax on
+colorscheme onedark
+
+
+"" Highlight current line
+autocmd ColorScheme *
+    \ hi CursorLine ctermbg=234
+    "\ highlight CursorLine cterm=NONE ctermbg=NONE ctermfg=1 guibg=NONE guifg=NONE
+
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
+
+"" Autocomplete window
+autocmd ColorScheme *
+    \ hi Pmenu ctermbg=240 guibg=black
+
+" -------------------- Stuff that must execute last ----------------- "
+
+"" Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
-
