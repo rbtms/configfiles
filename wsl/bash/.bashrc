@@ -84,10 +84,9 @@ if [ -x /usr/bin/dircolors ]; then
     # -v: Sort numbers 1-2-10 and hidden files first
     # -G: Dont show group on long lists
     alias ls='ls -alhv -G --color=auto'
-
-    #alias grep='grep --color=auto'
-    #alias fgrep='fgrep --color=auto'
-    #alias egrep='egrep --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
 fi
 
 # Remove background colors
@@ -126,6 +125,7 @@ export pictures='/mnt/c/Users/Alvaro/pictures'
 export downloads='/mnt/c/Users/Alvaro/downloads'
 export documents='/mnt/c/Users/Alvaro/documents'
 export NVM_DIR="$HOME/.nvm"
+export VIM="/usr/share/vim"
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -143,4 +143,4 @@ fi
 
 # Load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
