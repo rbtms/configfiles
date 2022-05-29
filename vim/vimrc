@@ -76,7 +76,7 @@ vnoremap <space> zf
 let &t_SI = "\e[5 q"
 let &t_EI = "\e[1 q"
 
-augroup myCmds
+augroup foo
 au!
 autocmd VimEnter * silent !echo -ne "\e[1 q"
 augroup END
@@ -118,17 +118,17 @@ nnoremap <F5> :UndotreeToggle<CR>
 
 "" Tagbar
 nmap <F8> :TagbarToggle<CR>
+"" Sort by code position
+let g:tagbar_sort = 0
 
 "" Autocomplete
 "" Dont show doc window
 set completeopt=menu
 
-"let g:jedi#use_splits_not_buffers = "right"
-"let g:jedi#auto_initialization = 0
-"let g:jedi#auto_vim_configuration = 0
-"let g:jedi#popup_on_dot = 1
-"let g:jedi#show_call_signatures = 0
-"let g:jedi#completions_enabled = 1
+"" ALE
+let g:ale_linters = {'python': ['flake8', 'pylint']}
+let g:ale_python_pylint_executable = 'pylint3'
+let g:ale_python_pylint_options = '--rcfile ~/.pylint'
 
 " --------------------------- Style --------------------------------- "
 
@@ -136,11 +136,9 @@ set completeopt=menu
 syntax on
 colorscheme onedark
 
-
 "" Highlight current line
 autocmd ColorScheme *
     \ hi CursorLine ctermbg=234
-    "\ highlight CursorLine cterm=NONE ctermbg=NONE ctermfg=1 guibg=NONE guifg=NONE
 
 augroup CursorLine
     au!
@@ -155,6 +153,6 @@ autocmd ColorScheme *
 " -------------------- Stuff that must execute last ----------------- "
 
 "" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
+"if filereadable("/etc/vim/vimrc.local")
+"  source /etc/vim/vimrc.local
+"endif
