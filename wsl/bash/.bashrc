@@ -98,17 +98,18 @@ eval "$(dircolors -p | \
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # Alias definitions.
-alias python='python.exe'
-alias profile='python.exe -m profile'
-alias pip="pip3.exe"
+alias python='python3'
+alias profile='/usr/bin/profile.sh'
+#alias pip="pip3.exe"
 alias explorer="explorer.exe"
 alias vlc='"/mnt/c/Program Files/VideoLAN/VLC/vlc.exe"'
+alias ff='"/mnt/c/Program Files/Mozilla Firefox/firefox.exe"'
 alias cleanall="/usr/bin/clean.sh"
 alias ffbackup="/usr/bin/ffbackup.sh"
 alias howdoi="python -m howdoi"
 alias catbox="cat /usr/bin/catbox.py | python.exe -"
 alias litterbox="cat /usr/bin/catbox.py | python.exe - litterbox"
-alias wallpaper="python $(wslpath -m /usr/bin/wallpaper.py)"
+alias wallpaper="python.exe $(wslpath -m /usr/bin/wallpaper.py)"
 alias mail="cat /usr/bin/mail.py | python.exe -"
 alias torrent="python3 /usr/bin/torrent.py"
 
@@ -144,3 +145,4 @@ fi
 # Load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
