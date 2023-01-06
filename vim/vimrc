@@ -49,9 +49,6 @@ set cursorline
 "" Open help on vertical split
 cnoreabbrev h vert h
 
-"" Copy
-"vnoremap <C-c> :'<,'>:w !/mnt/c/Windows/System32/clip.exe<CR>
-
 "" Allow to move splits with the mouse
 set ttymouse=sgr
 
@@ -81,6 +78,9 @@ au!
 autocmd VimEnter * silent !echo -ne "\e[1 q"
 augroup END
 
+"" JSON formatting
+command JSONFormat %! jq . 
+
 "" vim -b : edit binary
 augroup Binary
   au!
@@ -106,7 +106,25 @@ inoremap <expr> <Home> col('.') == match(getline('.'), '\S') + 1 ? "\<Home>" : "
 "" Jump to the last position when reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+"" Execute last command on right shell AFTER SAVING IT
+nmap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>h
+imap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>ha
+
+
+
 " -------------------------- Plugins -------------------------------- "
+
+""""""
+"
+" Plugin list:
+"   - NERDTree (File tree)
+"   - Undotree (Undo changes tree)
+"   - Tagbar (Symbol tagbar)
+"   - ALE (Autocomplete)
+"   - tcomment_vim (Comment with gc)
+"   - surround (Change the surrounding parentheses (or whatever) for exmaple with with cs"' (Changes " to '))
+"
+""""""
 
 "" NERDTree
 let NERDTreeIgnore=['.swp', '.ini', '.DAT']
@@ -123,17 +141,34 @@ let g:tagbar_sort = 0
 
 "" Autocomplete
 "" Dont show doc window
-set completeopt=menu
+"set completeopt=menu
 
 "" ALE
-let g:ale_linters = {'python': ['flake8', 'pylint']}
-let g:ale_python_pylint_executable = 'pylint3'
+set completeopt=menu,menuone,preview,noselect,noinsert
+let g:ale_completion_enabled = 1
+let g:ale_linters = {'python': ['pylint', 'pylsp'], 'rust': ['rustc', 'analyzer']}
+let g:ale_fixers = { 'python': ['trim_whitespace'] } 
+let g:ale_fix_on_save = 1
+
+let g:ale_python_pylint_executable = 'pylint'
 let g:ale_python_pylint_options = '--rcfile ~/.pylint'
+
+""" pylsp
+let g:ale_python_pylsp_executable = 'pyls'
+
+" Disable pylsp linting (leave only autocompletion)
+let g:ale_python_pylsp_config = { 'pyls': { 'plugins': { 'pycodestyle': { 'enabled': v:false } } } }
+
+" Show popups instead of buffers for autocomplete function information
+set completeopt=menu,menuone,popup,noselect,noinsert
 
 " --------------------------- Style --------------------------------- "
 
 "" Syntax
 syntax on
+
+set termguicolors
+set background=dark
 colorscheme onedark
 
 "" Highlight current line
@@ -142,7 +177,7 @@ autocmd ColorScheme *
 
 augroup CursorLine
     au!
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
 
@@ -150,9 +185,10 @@ augroup END
 autocmd ColorScheme *
     \ hi Pmenu ctermbg=240 guibg=black
 
-" -------------------- Stuff that must execute last ----------------- "
-
-"" Source a global configuration file if available
-"if filereadable("/etc/vim/vimrc.local")
-"  source /etc/vim/vimrc.local
-"endif
+"" Add self highlighting
+augroup python
+    autocmd!
+    autocmd FileType python
+                \   syn keyword pythonSelf self
+                \ | highlight def link pythonSelf Special
+augroup end
