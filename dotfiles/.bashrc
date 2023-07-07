@@ -60,7 +60,10 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}' # Default
+    PS1+='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]' # Add user and path
+    PS1+='$(__git_ps1 " \[\033[01;30m\](%s)\033[00m\] ")' # Add git actual branch if you are in a folder with git
+    PS1+='\$ ' # Add prompt symbol
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -83,7 +86,7 @@ if [ -x /usr/bin/dircolors ]; then
     # -h: Human readable sizes
     # -v: Sort numbers 1-2-10 and hidden files first
     # -G: Dont show group on long lists
-    alias ls='ls -alhv -G --color=auto'
+    alias ls='ls -alhv -NG --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
@@ -103,6 +106,7 @@ fi
 
 alias python="python3"
 alias bat="batcat"
+alias df="df -h"
 
 ## Python scripts
 alias catbox="cat /usr/bin/scripts/catbox.py | python3 -"
@@ -110,7 +114,8 @@ alias litterbox="cat /usr/bin/scripts/catbox.py | python3 - litterbox"
 alias wallpaper="python3 /usr/bin/scripts/wallpaper.py"
 alias mail="python3 /usr/bin/scripts/mail.py"
 alias protonmail="python3 /usr/bin/scripts/protonmail.py"
-alias torrent="python3 /usr/bin/scripts/torrent.py"
+alias torrent="python3 /usr/bin/scripts/torrent/torrent.py"
+alias ytcatbox="python3 /usr/bin/scripts/ytcatbox.py"
 #alias howdoi="python -m howdoi"
 
 ## Shell scripts
@@ -121,6 +126,8 @@ alias publicip="/usr/bin/scripts/get_public_ip.sh"
 alias nosound="killall pulseaudio; rm -r ~/.config/pulse/*"
 alias proton="~/.steam/root/compatibilitytools.d/GE-Proton7-43/files/bin/wine"
 alias proton64="~/.steam/root/compatibilitytools.d/GE-Proton7-43/files/bin/wine64"
+alias factorio="~/Documents/test/Factorio/start.n.sh"
+
 
 # some more ls aliases
 #alias ll='ls -l'
@@ -136,6 +143,9 @@ export SCRIPTS=/usr/bin/scripts
 # To avoid locale problems
 export LC_ALL="en_US.UTF-8"
 
+# Enable git branch display in PS1
+source /usr/bin/git-prompt.sh
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -147,3 +157,7 @@ if ! shopt -oq posix; then
   fi
 fi
 . "$HOME/.cargo/env"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
