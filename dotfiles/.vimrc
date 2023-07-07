@@ -18,6 +18,7 @@ set wrap
 set belloff=all
 set bs=2
 set ai
+set encoding=utf-8
 
 "" Filetype plugins
 filetype indent on
@@ -53,7 +54,7 @@ cnoreabbrev h vert h
 set ttymouse=sgr
 
 "" Folding
-set foldmethod=indent   
+set foldmethod=indent
 set nofoldenable
 set foldnestmax=1
 set foldlevel=0
@@ -77,6 +78,10 @@ augroup foo
 au!
 autocmd VimEnter * silent !echo -ne "\e[1 q"
 augroup END
+
+"" Map Q to q and W to w to prevent typos
+:command W w
+:command Q q
 
 "" JSON formatting
 command JSONFormat %! jq . 
@@ -106,10 +111,62 @@ inoremap <expr> <Home> col('.') == match(getline('.'), '\S') + 1 ? "\<Home>" : "
 "" Jump to the last position when reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-"" Execute last command on right shell AFTER SAVING IT
-nmap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>h
-imap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>ha
+"" Execute the default run command for a file extension
+function s:exec_run_cmd_term(filename)
+    if a:filename[-3:-1] == '.py'
+        call feedkeys("python " . a:filename . "\<CR>")
+        "echo "python " . a:filename . "\<CR>"
+    elseif a:filename[-3:-1] == '.sh'
+        call feedkeys("sh " . a:filename . "\<CR>")
+    endif
+endfunction
 
+"" Execute last command on right shell AFTER SAVING IT
+function! Run_in_terminal(mode)
+    let filename = bufname()
+    let buf_n = bufnr()
+
+    "" Save the file
+    execute ':w'
+
+    "" If there isnt a terminal start one and execute the initial command
+    if !bufexists('!/bin/bash')
+        execute 'Term'
+        sleep 20m " Sleep 20 miliseconds so that the command doesnt appear before the first prompt
+        call s:exec_run_cmd_term(filename)
+    "" If there is a terminal run the last command
+    else
+        let terms = win_findbuf(bufnr('!/bin/bash')) " List terminal buffers
+        call win_gotoid(terms[0]) " Move to the first buffer with a terminal
+        call feedkeys("!!\<CR>") " Execute last command
+    endif
+   
+    "" Return to the original buffer. It doesnt allow to run it after the
+    "" function.
+    "" <C-W><C-P>: Go back to the previous window
+    if a:mode == 'normal'
+        call feedkeys("\<C-W>\<C-P>")
+    elseif a:mode == 'insert' " Insert
+        call feedkeys("\<C-W>\<C-P>a")
+    else
+        echo 'Mode not valid'
+    endif
+endfunction
+
+"" Run program on a terminal
+"nmap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>h
+"imap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>ha
+nmap <F2> :call Run_in_terminal('normal')<ENTER>
+imap <F2> <ESC>:call Run_in_terminal('insert')<ENTER>
+
+"" Scroll terminal with PageUp
+tmap <PageUp> <C-W>N<PageUp>
+
+"" Map CTRL+PrevPag and CTRL+NextPag to cycle buffers and not tabs
+"" bp: Previous buffer, bn: Next buffer, bd: Delete buffer
+map <S-a> :bp<CR>
+map <S-s> :bn<CR>
+map <S-d> :bd<CR>
 
 
 " -------------------------- Plugins -------------------------------- "
@@ -123,6 +180,7 @@ imap <F2> <ESC>:w<ENTER><C-W>l!!<ENTER><C-W>ha
 "   - ALE (Autocomplete)
 "   - tcomment_vim (Comment with gc)
 "   - surround (Change the surrounding parentheses (or whatever) for exmaple with with cs"' (Changes " to '))
+"   - buftabline (Tab line with buffers instead of tabs)
 "
 """"""
 
@@ -162,6 +220,13 @@ let g:ale_python_pylsp_config = { 'pyls': { 'plugins': { 'pycodestyle': { 'enabl
 " Show popups instead of buffers for autocomplete function information
 set completeopt=menu,menuone,popup,noselect,noinsert
 
+" Show indicators like when you modify a file on buftabline
+let g:buftabline_indicators = 1
+
+"nnoremap <S-PageUp> :bn<CR>
+"nnoremap <S-PageDown> :bp<CR>
+
+
 " --------------------------- Style --------------------------------- "
 
 "" Syntax
@@ -171,9 +236,20 @@ set termguicolors
 set background=dark
 colorscheme onedark
 
+set termguicolors
+" Change background color to that of the terminal
+hi Normal guibg=#121314
+" Change terminal's background too
+hi Terminal guibg=#121314
+" Change vertical separator character
+set fillchars+=vert:│
+
 "" Highlight current line
-autocmd ColorScheme *
-    \ hi CursorLine ctermbg=234
+"autocmd ColorScheme *
+"    \ hi CursorLine ctermbg=234
+
+" Change the background color of the current line
+hi CursorLine guibg=#202122
 
 augroup CursorLine
     au!
